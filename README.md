@@ -5,6 +5,6 @@ This includes Reducer, Actions and Async-Operations.<br />
 
 # Install
 ```
-$ yarn add aws-amplify aws-sdk redux-thunk
+$ yarn add aws-amplify aws-sdk redux redux-thunk
 $ yarn add amplify-auth-redux-module
 ```

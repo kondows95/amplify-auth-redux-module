@@ -1,5 +1,6 @@
 import { Auth } from 'aws-amplify';
 import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 import { CognitoUser } from '@aws-amplify/auth';
 //import AWS from 'aws-sdk';
 
@@ -35,8 +36,7 @@ const _getCommonState = (state: AuthState): AuthState => ({
     loading: false,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default (state: AuthState, action: any): AuthState => {
+export default (state: AuthState, action: AnyAction): AuthState => {
     switch (action.type) {
         case 'AUTH_FETCH_AUTHED_USER':
         case 'AUTH_REFRESH_TOKEN':
@@ -127,7 +127,7 @@ export const authForgotPasswordSuccess = (email: string): Action => ({
 //Async Operations
 //=============================================================================
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Dispatch = ThunkDispatch<any, undefined, any>;
+type Dispatch = ThunkDispatch<any, undefined, AnyAction>;
 
 export const fetchAuthedUser = () => {
     return async (dispatch: Dispatch): Promise<void> => {

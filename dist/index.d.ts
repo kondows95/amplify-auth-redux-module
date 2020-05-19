@@ -1,0 +1,32 @@
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+import { CognitoUser } from '@aws-amplify/auth';
+export declare type Action = {
+    type: string;
+    payload?: any;
+};
+export declare type AuthState = {
+    authState: string;
+    error: string;
+    loading: boolean;
+    user: any;
+    email: string;
+};
+export declare const initialState: AuthState;
+declare const _default: (state: AuthState, action: AnyAction) => AuthState;
+export default _default;
+export declare const fetchAuthedUserSuccess: (user: CognitoUser) => Action;
+export declare const refreshTokenSuccess: (user: CognitoUser) => Action;
+export declare const authInit: () => Action;
+export declare const authBeginLoading: () => Action;
+export declare const authError: (err: any) => Action;
+export declare const changeAuthState: (value: string) => Action;
+export declare const authSignInSuccess: (user: CognitoUser) => Action;
+export declare const authForgotPasswordSuccess: (email: string) => Action;
+declare type Dispatch = ThunkDispatch<any, undefined, AnyAction>;
+export declare const fetchAuthedUser: () => (dispatch: Dispatch) => Promise<void>;
+export declare const refreshToken: () => (dispatch: Dispatch) => Promise<void>;
+export declare const signOut: () => (dispatch: Dispatch) => Promise<void>;
+export declare const signIn: (email: string, password: string) => (dispatch: Dispatch) => Promise<void>;
+export declare const forgotPassword: (email: string) => (dispatch: Dispatch) => Promise<void>;
+export declare const forgotPasswordSubmit: (email: string, code: string, password: string) => (dispatch: Dispatch) => Promise<void>;
