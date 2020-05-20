@@ -169,8 +169,8 @@ it('Default reducer', () => {
         ...initialState,
     };
 
-    const inputState = authReducer(initialState, action);
-    expect(inputState).toEqual(expectedState);
+    expect(authReducer(initialState, action)).toEqual(expectedState);
+    expect(authReducer(undefined, action)).toEqual(expectedState);
 });
 
 //=============================================================================

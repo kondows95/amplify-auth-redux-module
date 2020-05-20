@@ -36,7 +36,7 @@ const _getCommonState = (state: AuthState): AuthState => ({
     loading: false,
 });
 
-export default (state: AuthState, action: AnyAction): AuthState => {
+export default (state: AuthState = initialState, action: AnyAction): AuthState => {
     switch (action.type) {
         case 'AUTH_FETCH_AUTHED_USER':
         case 'AUTH_REFRESH_TOKEN':
