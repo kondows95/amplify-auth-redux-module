@@ -150,8 +150,8 @@ it('Default reducer', () => {
         type: 'Default',
     };
     const expectedState = Object.assign({}, initialState);
-    const inputState = index_1.default(initialState, action);
-    expect(inputState).toEqual(expectedState);
+    expect(index_1.default(initialState, action)).toEqual(expectedState);
+    expect(index_1.default(undefined, action)).toEqual(expectedState);
 });
 //=============================================================================
 //Operations testing

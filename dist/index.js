@@ -22,7 +22,7 @@ exports.initialState = {
 //Reducers
 //=============================================================================
 const _getCommonState = (state) => (Object.assign(Object.assign({}, state), { error: '', loading: false }));
-exports.default = (state, action) => {
+exports.default = (state = exports.initialState, action) => {
     switch (action.type) {
         case 'AUTH_FETCH_AUTHED_USER':
         case 'AUTH_REFRESH_TOKEN':

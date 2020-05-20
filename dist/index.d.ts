@@ -13,7 +13,7 @@ export declare type AuthState = {
     email: string;
 };
 export declare const initialState: AuthState;
-declare const _default: (state: AuthState, action: AnyAction) => AuthState;
+declare const _default: (state: AuthState | undefined, action: AnyAction) => AuthState;
 export default _default;
 export declare const fetchAuthedUserSuccess: (user: CognitoUser) => Action;
 export declare const refreshTokenSuccess: (user: CognitoUser) => Action;
