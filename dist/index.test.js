@@ -410,11 +410,3 @@ it('forgotPassword error', () => __awaiter(void 0, void 0, void 0, function* () 
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 }));
-/*
-
-
-
-
-
-
-*/

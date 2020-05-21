@@ -483,12 +483,3 @@ it('forgotPassword error', async () => {
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 });
-
-/*
-
-
-
-
-
-
-*/
