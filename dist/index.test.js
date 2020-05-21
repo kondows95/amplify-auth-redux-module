@@ -44,7 +44,7 @@ it('AUTH_FETCH_AUTHED_USER', () => {
         type: 'AUTH_FETCH_AUTHED_USER',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -52,7 +52,7 @@ it('AUTH_FETCH_AUTHED_USER', () => {
     };
     const expectedState = Object.assign(Object.assign({}, initialState), { user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -65,7 +65,7 @@ it('AUTH_REFRESH_TOKEN', () => {
         type: 'AUTH_REFRESH_TOKEN',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -73,7 +73,7 @@ it('AUTH_REFRESH_TOKEN', () => {
     };
     const expectedState = Object.assign(Object.assign({}, initialState), { user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -120,7 +120,7 @@ it('AUTH_SIGN_IN_SUCCESS', () => {
         type: 'AUTH_SIGN_IN_SUCCESS',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -128,11 +128,20 @@ it('AUTH_SIGN_IN_SUCCESS', () => {
     };
     const expectedState = Object.assign(Object.assign({}, initialState), { user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
         }, authState: '' });
+    const inputState = index_1.default(initialState, action);
+    expect(inputState).toEqual(expectedState);
+});
+it('AUTH_SIGN_UP_SUCCESS', () => {
+    const action = {
+        type: 'AUTH_SIGN_UP_SUCCESS',
+        payload: 'example@gmail.com',
+    };
+    const expectedState = Object.assign(Object.assign({}, initialState), { email: 'example@gmail.com', authState: 'confirmSignUp' });
     const inputState = index_1.default(initialState, action);
     expect(inputState).toEqual(expectedState);
 });
@@ -251,16 +260,16 @@ it('signOut error', () => __awaiter(void 0, void 0, void 0, function* () {
 }));
 it('signIn success', () => __awaiter(void 0, void 0, void 0, function* () {
     aws_amplify_1.Auth.signIn = jest.fn().mockImplementation(() => {
-        return { data: { email: 'test@example.com', password: '12345678' } };
+        return { data: { email: 'test@example.com', password: 'PW123' } };
     });
     const expectedAction = [
         {
             type: 'AUTH_SIGN_IN_SUCCESS',
-            payload: { data: { email: 'test@example.com', password: '12345678' } },
+            payload: { data: { email: 'test@example.com', password: 'PW123' } },
         },
     ];
-    yield index_1.signIn('test@example.com', '12345678')(dispatch);
-    expect(aws_amplify_1.Auth.signIn).toHaveBeenCalledWith('test@example.com', '12345678');
+    yield index_1.signIn('test@example.com', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.signIn).toHaveBeenCalledWith('test@example.com', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 }));
@@ -274,15 +283,87 @@ it('signIn error', () => __awaiter(void 0, void 0, void 0, function* () {
             payload: 'system error',
         },
     ];
-    yield index_1.signIn('test@example.com', '12345678')(dispatch);
-    expect(aws_amplify_1.Auth.signIn).toHaveBeenCalledWith('test@example.com', '12345678');
+    yield index_1.signIn('test@example.com', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.signIn).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+}));
+it('signUp success', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.signUp = jest.fn();
+    const expectedAction = [
+        {
+            type: 'AUTH_SIGN_UP_SUCCESS',
+            payload: 'test@example.com',
+        },
+    ];
+    yield index_1.signUp('test@example.com', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.signUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+}));
+it('signUp error', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.signUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+    yield index_1.signUp('test@example.com', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.signUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+}));
+it('confirmSignUp success', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.confirmSignUp = jest.fn();
+    yield index_1.confirmSignUp('test@example.com', 'CD123')(dispatch);
+    expect(aws_amplify_1.Auth.confirmSignUp).toHaveBeenCalledWith('test@example.com', 'CD123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+}));
+it('confirmSignUp error', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.confirmSignUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+    yield index_1.confirmSignUp('test@example.com', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.confirmSignUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+}));
+it('resendSignUp success', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.resendSignUp = jest.fn();
+    yield index_1.resendSignUp('test@example.com')(dispatch);
+    expect(aws_amplify_1.Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+}));
+it('resendSignUp error', () => __awaiter(void 0, void 0, void 0, function* () {
+    aws_amplify_1.Auth.resendSignUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+    yield index_1.resendSignUp('test@example.com')(dispatch);
+    expect(aws_amplify_1.Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 }));
 it('forgotPasswordSubmit success', () => __awaiter(void 0, void 0, void 0, function* () {
     aws_amplify_1.Auth.forgotPasswordSubmit = jest.fn();
-    yield index_1.forgotPasswordSubmit('test@example.com', '123455', '12345678')(dispatch);
-    expect(aws_amplify_1.Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', '123455', '12345678');
+    yield index_1.forgotPasswordSubmit('test@example.com', 'CD123', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', 'CD123', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
 }));
@@ -296,8 +377,8 @@ it('forgotPasswordSubmit error', () => __awaiter(void 0, void 0, void 0, functio
             payload: 'system error',
         },
     ];
-    yield index_1.forgotPasswordSubmit('test@example.com', '123455', '12345678')(dispatch);
-    expect(aws_amplify_1.Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', '123455', '12345678');
+    yield index_1.forgotPasswordSubmit('test@example.com', 'CD123', 'PW123')(dispatch);
+    expect(aws_amplify_1.Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', 'CD123', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 }));

@@ -3,6 +3,9 @@ import authReducer, {
     refreshToken,
     signOut,
     signIn,
+    signUp,
+    confirmSignUp,
+    resendSignUp,
     forgotPasswordSubmit,
     forgotPassword,
     changeAuthState,
@@ -26,7 +29,7 @@ it('AUTH_FETCH_AUTHED_USER', () => {
         type: 'AUTH_FETCH_AUTHED_USER',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -36,7 +39,7 @@ it('AUTH_FETCH_AUTHED_USER', () => {
         ...initialState,
         user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -51,7 +54,7 @@ it('AUTH_REFRESH_TOKEN', () => {
         type: 'AUTH_REFRESH_TOKEN',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -61,7 +64,7 @@ it('AUTH_REFRESH_TOKEN', () => {
         ...initialState,
         user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -125,7 +128,7 @@ it('AUTH_SIGN_IN_SUCCESS', () => {
         type: 'AUTH_SIGN_IN_SUCCESS',
         payload: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
@@ -135,12 +138,26 @@ it('AUTH_SIGN_IN_SUCCESS', () => {
         ...initialState,
         user: {
             email: 'example@gmail.com',
-            password: '12345678',
+            password: 'PW123',
             signInUserSession: {
                 idToken: { jwtToken: '123456789' },
             },
         },
         authState: '',
+    };
+    const inputState = authReducer(initialState, action);
+    expect(inputState).toEqual(expectedState);
+});
+
+it('AUTH_SIGN_UP_SUCCESS', () => {
+    const action = {
+        type: 'AUTH_SIGN_UP_SUCCESS',
+        payload: 'example@gmail.com',
+    };
+    const expectedState = {
+        ...initialState,
+        email: 'example@gmail.com',
+        authState: 'confirmSignUp',
     };
     const inputState = authReducer(initialState, action);
     expect(inputState).toEqual(expectedState);
@@ -287,18 +304,18 @@ it('signOut error', async () => {
 
 it('signIn success', async () => {
     Auth.signIn = jest.fn().mockImplementation(() => {
-        return { data: { email: 'test@example.com', password: '12345678' } };
+        return { data: { email: 'test@example.com', password: 'PW123' } };
     });
 
     const expectedAction = [
         {
             type: 'AUTH_SIGN_IN_SUCCESS',
-            payload: { data: { email: 'test@example.com', password: '12345678' } },
+            payload: { data: { email: 'test@example.com', password: 'PW123' } },
         },
     ];
 
-    await signIn('test@example.com', '12345678')(dispatch);
-    expect(Auth.signIn).toHaveBeenCalledWith('test@example.com', '12345678');
+    await signIn('test@example.com', 'PW123')(dispatch);
+    expect(Auth.signIn).toHaveBeenCalledWith('test@example.com', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 });
@@ -315,16 +332,102 @@ it('signIn error', async () => {
         },
     ];
 
-    await signIn('test@example.com', '12345678')(dispatch);
-    expect(Auth.signIn).toHaveBeenCalledWith('test@example.com', '12345678');
+    await signIn('test@example.com', 'PW123')(dispatch);
+    expect(Auth.signIn).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+});
+
+it('signUp success', async () => {
+    Auth.signUp = jest.fn();
+
+    const expectedAction = [
+        {
+            type: 'AUTH_SIGN_UP_SUCCESS',
+            payload: 'test@example.com',
+        },
+    ];
+
+    await signUp('test@example.com', 'PW123')(dispatch);
+    expect(Auth.signUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+});
+
+it('signUp error', async () => {
+    Auth.signUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+
+    await signUp('test@example.com', 'PW123')(dispatch);
+    expect(Auth.signUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+});
+
+it('confirmSignUp success', async () => {
+    Auth.confirmSignUp = jest.fn();
+    await confirmSignUp('test@example.com', 'CD123')(dispatch);
+    expect(Auth.confirmSignUp).toHaveBeenCalledWith('test@example.com', 'CD123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+});
+
+it('confirmSignUp error', async () => {
+    Auth.confirmSignUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+
+    await confirmSignUp('test@example.com', 'PW123')(dispatch);
+    expect(Auth.confirmSignUp).toHaveBeenCalledWith('test@example.com', 'PW123');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+});
+
+it('resendSignUp success', async () => {
+    Auth.resendSignUp = jest.fn();
+    await resendSignUp('test@example.com')(dispatch);
+    expect(Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
+    expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
+    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+});
+
+it('resendSignUp error', async () => {
+    Auth.resendSignUp = jest.fn().mockImplementation(() => {
+        throw 'system error';
+    });
+
+    const expectedAction = [
+        {
+            type: 'AUTH_SYSTEM_ERROR',
+            payload: 'system error',
+        },
+    ];
+
+    await resendSignUp('test@example.com')(dispatch);
+    expect(Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 });
 
 it('forgotPasswordSubmit success', async () => {
     Auth.forgotPasswordSubmit = jest.fn();
-    await forgotPasswordSubmit('test@example.com', '123455', '12345678')(dispatch);
-    expect(Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', '123455', '12345678');
+    await forgotPasswordSubmit('test@example.com', 'CD123', 'PW123')(dispatch);
+    expect(Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', 'CD123', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
 });
@@ -341,8 +444,8 @@ it('forgotPasswordSubmit error', async () => {
         },
     ];
 
-    await forgotPasswordSubmit('test@example.com', '123455', '12345678')(dispatch);
-    expect(Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', '123455', '12345678');
+    await forgotPasswordSubmit('test@example.com', 'CD123', 'PW123')(dispatch);
+    expect(Auth.forgotPasswordSubmit).toHaveBeenCalledWith('test@example.com', 'CD123', 'PW123');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 });

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPasswordSubmit = exports.forgotPassword = exports.signIn = exports.signOut = exports.refreshToken = exports.fetchAuthedUser = exports.authForgotPasswordSuccess = exports.authSignInSuccess = exports.changeAuthState = exports.authError = exports.authBeginLoading = exports.authInit = exports.refreshTokenSuccess = exports.fetchAuthedUserSuccess = exports.initialState = void 0;
+exports.forgotPasswordSubmit = exports.forgotPassword = exports.resendSignUp = exports.confirmSignUp = exports.signUp = exports.signIn = exports.signOut = exports.refreshToken = exports.fetchAuthedUser = exports.authForgotPasswordSuccess = exports.authSignUpSuccess = exports.authSignInSuccess = exports.changeAuthState = exports.authError = exports.authBeginLoading = exports.authInit = exports.refreshTokenSuccess = exports.fetchAuthedUserSuccess = exports.initialState = void 0;
 const aws_amplify_1 = require("aws-amplify");
 exports.initialState = {
     authState: 'signIn',
@@ -37,6 +37,8 @@ exports.default = (state = exports.initialState, action) => {
             return Object.assign(Object.assign({}, _getCommonState(state)), { authState: action.payload });
         case 'AUTH_SIGN_IN_SUCCESS':
             return Object.assign(Object.assign({}, _getCommonState(state)), { user: action.payload, authState: '' });
+        case 'AUTH_SIGN_UP_SUCCESS':
+            return Object.assign(Object.assign({}, _getCommonState(state)), { authState: 'confirmSignUp', email: action.payload });
         case 'AUTH_FORGOT_PASSWORD_SUCCESS':
             return Object.assign(Object.assign({}, _getCommonState(state)), { authState: 'forgotPasswordReset', email: action.payload });
         default:
@@ -72,6 +74,10 @@ exports.changeAuthState = (value) => ({
 exports.authSignInSuccess = (user) => ({
     type: 'AUTH_SIGN_IN_SUCCESS',
     payload: user,
+});
+exports.authSignUpSuccess = (email) => ({
+    type: 'AUTH_SIGN_UP_SUCCESS',
+    payload: email,
 });
 exports.authForgotPasswordSuccess = (email) => ({
     type: 'AUTH_FORGOT_PASSWORD_SUCCESS',
@@ -122,6 +128,42 @@ exports.signIn = (email, password) => {
         try {
             const user = yield aws_amplify_1.Auth.signIn(email, password);
             dispatch(exports.authSignInSuccess(user));
+        }
+        catch (err) {
+            dispatch(exports.authError(err));
+        }
+    });
+};
+exports.signUp = (email, password) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        dispatch(exports.authBeginLoading());
+        try {
+            yield aws_amplify_1.Auth.signUp(email, password);
+            dispatch(exports.authSignUpSuccess(email));
+        }
+        catch (err) {
+            dispatch(exports.authError(err));
+        }
+    });
+};
+exports.confirmSignUp = (email, code) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        dispatch(exports.authBeginLoading());
+        try {
+            yield aws_amplify_1.Auth.confirmSignUp(email, code);
+            dispatch(exports.authInit());
+        }
+        catch (err) {
+            dispatch(exports.authError(err));
+        }
+    });
+};
+exports.resendSignUp = (email) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        dispatch(exports.authBeginLoading());
+        try {
+            yield aws_amplify_1.Auth.resendSignUp(email);
+            dispatch(exports.authInit());
         }
         catch (err) {
             dispatch(exports.authError(err));

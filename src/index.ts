@@ -70,6 +70,12 @@ export default (state: AuthState = initialState, action: AnyAction): AuthState =
                 user: action.payload,
                 authState: '',
             };
+        case 'AUTH_SIGN_UP_SUCCESS':
+            return {
+                ..._getCommonState(state),
+                authState: 'confirmSignUp',
+                email: action.payload,
+            };
         case 'AUTH_FORGOT_PASSWORD_SUCCESS':
             return {
                 ..._getCommonState(state),
@@ -116,6 +122,11 @@ export const changeAuthState = (value: string): Action => ({
 export const authSignInSuccess = (user: CognitoUser): Action => ({
     type: 'AUTH_SIGN_IN_SUCCESS',
     payload: user,
+});
+
+export const authSignUpSuccess = (email: string): Action => ({
+    type: 'AUTH_SIGN_UP_SUCCESS',
+    payload: email,
 });
 
 export const authForgotPasswordSuccess = (email: string): Action => ({
@@ -174,6 +185,42 @@ export const signIn = (email: string, password: string) => {
         try {
             const user = await Auth.signIn(email, password);
             dispatch(authSignInSuccess(user));
+        } catch (err) {
+            dispatch(authError(err));
+        }
+    };
+};
+
+export const signUp = (email: string, password: string) => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        dispatch(authBeginLoading());
+        try {
+            await Auth.signUp(email, password);
+            dispatch(authSignUpSuccess(email));
+        } catch (err) {
+            dispatch(authError(err));
+        }
+    };
+};
+
+export const confirmSignUp = (email: string, code: string) => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        dispatch(authBeginLoading());
+        try {
+            await Auth.confirmSignUp(email, code);
+            dispatch(authInit());
+        } catch (err) {
+            dispatch(authError(err));
+        }
+    };
+};
+
+export const resendSignUp = (email: string) => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        dispatch(authBeginLoading());
+        try {
+            await Auth.resendSignUp(email);
+            dispatch(authInit());
         } catch (err) {
             dispatch(authError(err));
         }
