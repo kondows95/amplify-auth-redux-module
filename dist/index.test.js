@@ -98,6 +98,13 @@ it('AUTH_BEGIN_LOADING', () => {
     const inputState = index_1.default(initialState, action);
     expect(inputState).toEqual(expectedState);
 });
+it('AUTH_END_LOADING', () => {
+    const action = {
+        type: 'AUTH_END_LOADING',
+    };
+    const inputState = index_1.default(initialState, action);
+    expect(inputState).toEqual(initialState);
+});
 it('AUTH_INIT', () => {
     const action = {
         type: 'AUTH_INIT',
@@ -340,10 +347,15 @@ it('confirmSignUp error', () => __awaiter(void 0, void 0, void 0, function* () {
 }));
 it('resendSignUp success', () => __awaiter(void 0, void 0, void 0, function* () {
     aws_amplify_1.Auth.resendSignUp = jest.fn();
+    const expectedAction = [
+        {
+            type: 'AUTH_END_LOADING',
+        },
+    ];
     yield index_1.resendSignUp('test@example.com')(dispatch);
     expect(aws_amplify_1.Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
-    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 }));
 it('resendSignUp error', () => __awaiter(void 0, void 0, void 0, function* () {
     aws_amplify_1.Auth.resendSignUp = jest.fn().mockImplementation(() => {

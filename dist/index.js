@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPasswordSubmit = exports.forgotPassword = exports.resendSignUp = exports.confirmSignUp = exports.signUp = exports.signIn = exports.signOut = exports.refreshToken = exports.fetchAuthedUser = exports.authForgotPasswordSuccess = exports.authSignUpSuccess = exports.authSignInSuccess = exports.changeAuthState = exports.authError = exports.authBeginLoading = exports.authInit = exports.refreshTokenSuccess = exports.fetchAuthedUserSuccess = exports.initialState = void 0;
+exports.forgotPasswordSubmit = exports.forgotPassword = exports.resendSignUp = exports.confirmSignUp = exports.signUp = exports.signIn = exports.signOut = exports.refreshToken = exports.fetchAuthedUser = exports.authForgotPasswordSuccess = exports.authSignUpSuccess = exports.authSignInSuccess = exports.changeAuthState = exports.authError = exports.authEndLoading = exports.authBeginLoading = exports.authInit = exports.refreshTokenSuccess = exports.fetchAuthedUserSuccess = exports.initialState = void 0;
 const aws_amplify_1 = require("aws-amplify");
 exports.initialState = {
     authState: 'signIn',
@@ -28,9 +28,11 @@ exports.default = (state = exports.initialState, action) => {
         case 'AUTH_REFRESH_TOKEN':
             return Object.assign(Object.assign({}, _getCommonState(state)), { user: action.payload });
         case 'AUTH_SYSTEM_ERROR':
-            return Object.assign(Object.assign({}, _getCommonState(state)), { error: action.payload, loading: false });
+            return Object.assign(Object.assign({}, _getCommonState(state)), { error: action.payload });
         case 'AUTH_BEGIN_LOADING':
             return Object.assign(Object.assign({}, _getCommonState(state)), { loading: true });
+        case 'AUTH_END_LOADING':
+            return _getCommonState(state);
         case 'AUTH_INIT':
             return Object.assign({}, exports.initialState);
         case 'AUTH_CHANGE_AUTH_STATE':
@@ -61,6 +63,9 @@ exports.authInit = () => ({
 });
 exports.authBeginLoading = () => ({
     type: 'AUTH_BEGIN_LOADING',
+});
+exports.authEndLoading = () => ({
+    type: 'AUTH_END_LOADING',
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.authError = (err) => ({
@@ -163,7 +168,7 @@ exports.resendSignUp = (email) => {
         dispatch(exports.authBeginLoading());
         try {
             yield aws_amplify_1.Auth.resendSignUp(email);
-            dispatch(exports.authInit());
+            dispatch(exports.authEndLoading());
         }
         catch (err) {
             dispatch(exports.authError(err));

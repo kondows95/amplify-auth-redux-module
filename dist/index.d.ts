@@ -19,6 +19,7 @@ export declare const fetchAuthedUserSuccess: (user: CognitoUser) => Action;
 export declare const refreshTokenSuccess: (user: CognitoUser) => Action;
 export declare const authInit: () => Action;
 export declare const authBeginLoading: () => Action;
+export declare const authEndLoading: () => Action;
 export declare const authError: (err: any) => Action;
 export declare const changeAuthState: (value: string) => Action;
 export declare const authSignInSuccess: (user: CognitoUser) => Action;

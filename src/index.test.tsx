@@ -99,6 +99,14 @@ it('AUTH_BEGIN_LOADING', () => {
     expect(inputState).toEqual(expectedState);
 });
 
+it('AUTH_END_LOADING', () => {
+    const action = {
+        type: 'AUTH_END_LOADING',
+    };
+    const inputState = authReducer(initialState, action);
+    expect(inputState).toEqual(initialState);
+});
+
 it('AUTH_INIT', () => {
     const action = {
         type: 'AUTH_INIT',
@@ -400,10 +408,17 @@ it('confirmSignUp error', async () => {
 
 it('resendSignUp success', async () => {
     Auth.resendSignUp = jest.fn();
+
+    const expectedAction = [
+        {
+            type: 'AUTH_END_LOADING',
+        },
+    ];
+
     await resendSignUp('test@example.com')(dispatch);
     expect(Auth.resendSignUp).toHaveBeenCalledWith('test@example.com');
     expect(dispatch.mock.calls[0]).toEqual(expectedActionBeginLoading);
-    expect(dispatch.mock.calls[1]).toEqual(expectedActionInit);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
 });
 
 it('resendSignUp error', async () => {

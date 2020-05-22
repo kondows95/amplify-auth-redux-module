@@ -48,13 +48,14 @@ export default (state: AuthState = initialState, action: AnyAction): AuthState =
             return {
                 ..._getCommonState(state),
                 error: action.payload,
-                loading: false,
             };
         case 'AUTH_BEGIN_LOADING':
             return {
                 ..._getCommonState(state),
                 loading: true,
             };
+        case 'AUTH_END_LOADING':
+            return _getCommonState(state);
         case 'AUTH_INIT':
             return {
                 ...initialState,
@@ -106,6 +107,10 @@ export const authInit = (): Action => ({
 
 export const authBeginLoading = (): Action => ({
     type: 'AUTH_BEGIN_LOADING',
+});
+
+export const authEndLoading = (): Action => ({
+    type: 'AUTH_END_LOADING',
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,7 +225,7 @@ export const resendSignUp = (email: string) => {
         dispatch(authBeginLoading());
         try {
             await Auth.resendSignUp(email);
-            dispatch(authInit());
+            dispatch(authEndLoading());
         } catch (err) {
             dispatch(authError(err));
         }
